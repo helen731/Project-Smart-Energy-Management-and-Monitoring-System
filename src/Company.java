@@ -124,8 +124,9 @@ public class Company {
 	 * @return Gas tariff
 	 */
 	public String getGasTariff() {
-		String id = String.format("%04d", 1);
-		String gas = stringMultiValueMap.getValue(id, 2);
+		Set<String> keys = stringMultiValueMap.keySet();
+		
+		String gas = stringMultiValueMap.getValue(keys.iterator().next(), 2);
 		return gas;
 	}
 
