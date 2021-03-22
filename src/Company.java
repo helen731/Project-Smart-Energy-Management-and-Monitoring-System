@@ -12,8 +12,15 @@ import java.util.Set;
  *
  */
 public class Company {
-	public static MultiValueMap<String, String> stringMultiValueMap = new LinkedMultiValueMap<>();
-
+	private static MultiValueMap<String, String> stringMultiValueMap;
+	
+	/**
+	 * Constructor
+	 * create an empty multivalue map
+	 */
+	public Company() {
+		stringMultiValueMap = new LinkedMultiValueMap<>();
+	}
 	/**
 	 * The method to read data from file
 	 * @param fileName The file name
@@ -21,7 +28,6 @@ public class Company {
 	 */
 	public void readFromFile(String fileName) throws Exception {
 		try {
-			stringMultiValueMap = new LinkedMultiValueMap<>();
 			File file = new File(fileName);
 			InputStream input = new FileInputStream(file);
 			byte[] b = new byte[(int) file.length()];
@@ -31,7 +37,7 @@ public class Company {
 			for (int i = 0; i < (split.length / 7); i++) {
 				int tempNo = Integer.parseInt(split[i * 7]);
 				for (int j = 0; j < 6; j++) {
-					stringMultiValueMap.add(String.format("%4d", tempNo).replace(" ", "0"), split[i * 7 + j + 1]);//牛逼的补零方法
+					stringMultiValueMap.add(String.format("%4d", tempNo).replace(" ", "0"), split[i * 7 + j + 1]);
 				}
 			}
 			input.close();
@@ -62,8 +68,6 @@ public class Company {
 		String[] split = str.split(" ");
 		for (int i = 0; i < (split.length / 7); i++) {
 			int tempNo = Integer.parseInt(split[i * 7]);
-
-			//stringMultiValueMap.add("000"+tempNo, split[i*7+j+1]);//愚蠢又暴力的补零方法
 			stringMultiValueMap.setValue(String.format("%4d", tempNo).replace(" ", "0"), 0, split[i * 7 + 1]);
 			stringMultiValueMap.setValue(String.format("%4d", tempNo).replace(" ", "0"), 1, split[i * 7 + 2]);
 
@@ -135,8 +139,8 @@ public class Company {
 	 * @return Element tariff
 	 */
 	public String getElectricityTariff() {
-		String id = String.format("%04d", 1);
-		String electricity = stringMultiValueMap.getValue(id, 3);
+		Set<String> keys = stringMultiValueMap.keySet();
+		String electricity = stringMultiValueMap.getValue(keys.iterator().next(), 3);
 		return electricity;
 	}
 
@@ -145,11 +149,6 @@ public class Company {
 	 * @param gasTariff Gas tariff
 	 */
 	public void setGasTariff(double gasTariff) {
-//		int n = stringMultiValueMap.size();
-//		for (int i = 1; i < n + 1; i++) {
-//			String id = String.format("%04d", i);
-//			stringMultiValueMap.setValue(id, 2, String.valueOf(gasTariff));
-//		}
 		Set<String> keys = stringMultiValueMap.keySet();
 		for(String key: keys) {
 			stringMultiValueMap.setValue(key, 2, String.valueOf(gasTariff));
@@ -186,7 +185,7 @@ public class Company {
 	 * @return The data of history
 	 */
 	public String[] getHistory(String date) {
-		//读取data.txt文件，建立新map historyMap
+		//read data.txt into a new map historyMap
 		MultiValueMap<String, String> historyMap = new LinkedMultiValueMap<>();
 		String fileName = date + ".txt";
 		try {
@@ -225,18 +224,6 @@ public class Company {
 			history[i] = oneuser;
 			i++;
 		}
-		/*			for(int i=1;i<n+1;i++){
-						String id = String.format("%04d",i);
-						String id2 = String.format("% 6d",i);
-						String gasM = String.format(" %10s",historyMap.getValue(id,0));
-						String eleM = String.format(" %14s",historyMap.getValue(id,1));
-						Double gasBill = Integer.parseInt(historyMap.getValue(id,0)) * Double.parseDouble(historyMap.getValue(id,2));
-						Double eleBill = Integer.parseInt(historyMap.getValue(id,1)) * Double.parseDouble(historyMap.getValue(id,3));
-						String gasB = String.format(" %24.2f",gasBill);
-						String eleB = String.format(" %10.2f",eleBill);
-						String oneuser = (id2 + gasM + eleM + gasB + eleB);
-						history[i] = oneuser;
-					}*/
 		return history;
 	}
 
@@ -245,9 +232,10 @@ public class Company {
 	 * @param id The user ID to remove
 	 * @return The status of delete
 	 */
-	public int removeUserfromMap(int id) {//c成功返回1， 不成功返回0
-		if (id < 10000 && id > -1) {//判定是不是四位数能撑下
-			if (stringMultiValueMap.containsKey(String.format("%4d", id).replace(" ", "0")) == true) {//判定有没有人用过这个
+	public int removeUserfromMap(int id) {
+		if (id < 10000 && id > -1) {//check if a valid input
+			//check if this id exist
+			if (stringMultiValueMap.containsKey(String.format("%4d", id).replace(" ", "0")) == true) {
 				stringMultiValueMap.remove(String.format("%4d", id).replace(" ", "0"));
 				return 1;
 			}
@@ -257,13 +245,13 @@ public class Company {
 
 	/**
 	 * Add a new user
-	 * @return Status of adding
+	 * @return Status of adding, 1 for success, 0 for fail
 	 */
-	public int addUserToMap() {//c成功返回1， 不成功返回0
+	public int addUserToMap() {
 		Random r = new Random();
 		int newKey = 1000 + r.nextInt(9000);
-		if (newKey < 10000 && newKey > -1) {//判定是不是四位数能撑下
-			if (stringMultiValueMap.containsKey(String.format("%4d", newKey).replace(" ", "0")) == false) {//判定有没有人用过这个
+		if (newKey < 10000 && newKey > -1) {
+			if (stringMultiValueMap.containsKey(String.format("%4d", newKey).replace(" ", "0")) == false) {
 				stringMultiValueMap.add(String.format("%4d", newKey).replace(" ", "0"), "" + 0);
 				stringMultiValueMap.add(String.format("%4d", newKey).replace(" ", "0"), "" + 0);
 				stringMultiValueMap.add(String.format("%4d", newKey).replace(" ", "0"),
