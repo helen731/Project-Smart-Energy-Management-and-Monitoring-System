@@ -1919,7 +1919,7 @@ public class Gui extends JFrame
 						}
 					}
 					output.close();
-					Thread.sleep(10000);
+					Thread.sleep(10000);//update every 10 seconds
 				}
 			}catch(Exception e){
 				System.out.println(e);
