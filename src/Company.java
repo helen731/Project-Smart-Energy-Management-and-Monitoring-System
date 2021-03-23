@@ -172,11 +172,11 @@ public class Company {
 	 */
 	public void zero() {
 		int n = stringMultiValueMap.size();
-		for (int i = 1; i < n + 1; i++) {
-			String id = String.format("%04d", i);
-			stringMultiValueMap.setValue(id, 0, String.format("%04d", 0));
-			stringMultiValueMap.setValue(id, 1, "0000");
-			stringMultiValueMap.setValue(id, 5, "0");
+		Set<String> keys = stringMultiValueMap.keySet();
+		for(String key: keys) {
+			stringMultiValueMap.setValue(key, 0, String.format("%04d", 0));
+			stringMultiValueMap.setValue(key, 1, "0000");
+			stringMultiValueMap.setValue(key, 5, "0");
 		}
 	}
 
