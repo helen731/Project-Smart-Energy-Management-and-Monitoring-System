@@ -12,15 +12,8 @@ import java.util.Set;
  *
  */
 public class Company {
-	private static MultiValueMap<String, String> stringMultiValueMap;
-	
-	/**
-	 * Constructor
-	 * create an empty multivalue map
-	 */
-	public Company() {
-		stringMultiValueMap = new LinkedMultiValueMap<>();
-	}
+	private static MultiValueMap<String, String> stringMultiValueMap = new LinkedMultiValueMap<>();
+
 	/**
 	 * The method to read data from file
 	 * @param fileName The file name
